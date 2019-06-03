@@ -1,7 +1,7 @@
 # mobile_number
 
 This is a FLutter Plugin to get the device mobile number.
-####Note: It works for Android only because getting mobile number of sim card is not supported in iOS.
+#### Note: It works for Android only because getting mobile number of sim card is not supported in iOS.
 
 ## Installation 
 #### Link on Flutter plugins
