@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
 
 void main() => runApp(MyApp());
@@ -12,22 +12,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _mobileNumber = '';
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    initMobileNumberState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
+  Future<void> initMobileNumberState() async {
+    String mobileNumber;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await MobileNumber.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      mobileNumber = await MobileNumber.mobileNumber;
+    } on Exception{
+            mobileNumber = 'Failed to get mobile number.';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _mobileNumber = mobileNumber;
     });
   }
 
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Running on: $_mobileNumber\n'),
         ),
       ),
     );

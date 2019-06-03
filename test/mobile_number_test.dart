@@ -16,6 +16,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await MobileNumber.platformVersion, '42');
+    expect(await MobileNumber.mobileNumber, '');
   });
 }
