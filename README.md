@@ -11,7 +11,7 @@ https://pub.dev/packages/mobile_number
 #### Add this to your package's pubspec.yaml file:
 ```
 dependencies:
-  mobile_number: ^0.0.2
+  mobile_number: ^0.0.4
 ```
 
 ## Usage
