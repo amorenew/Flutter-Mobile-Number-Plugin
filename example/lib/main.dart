@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-// import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
 
 void main() => runApp(MyApp());
@@ -22,12 +22,12 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initMobileNumberState() async {
-    String mobileNumber;
+    String mobileNumber = '';
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       mobileNumber = await MobileNumber.mobileNumber;
-    } on Exception{
-            mobileNumber = 'Failed to get mobile number.';
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get mobile number because of '${e.message}'");
     }
 
     // If the widget was removed from the tree while the asynchronous platform

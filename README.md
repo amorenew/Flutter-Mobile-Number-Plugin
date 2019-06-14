@@ -2,6 +2,7 @@
 
 This is a FLutter Plugin to get the device mobile number.
 #### Note: It works for Android only because getting mobile number of sim card is not supported in iOS.
+#### Note: If the mobile number is not pre-exist on sim card it will not return te phone number.
 
 ## Installation 
 #### Link on Flutter plugins
@@ -22,3 +23,24 @@ Future<String> fillMobileNumber() async {
   }
   ```
   
+### Or you could use it like this
+```
+  Future<void> initMobileNumberState() async {
+    String mobileNumber = '';
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      mobileNumber = await MobileNumber.mobileNumber;
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get mobile number because of '${e.message}'");
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _mobileNumber = mobileNumber;
+    });
+  }
+  ```

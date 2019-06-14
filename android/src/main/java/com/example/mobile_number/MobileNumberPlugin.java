@@ -4,10 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.telephony.TelephonyManager;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.telephony.TelephonyManager;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -81,9 +82,10 @@ public class MobileNumberPlugin implements MethodCallHandler, RequestPermissions
         if (line1Number.startsWith("0"))
             line1Number = line1Number.substring(1);
         String mobileNumber = countryPhoneCode + line1Number;
-        if (line1Number.isEmpty())
+        if (line1Number.isEmpty()) {
             mobileNumber = "";
-        result.success(mobileNumber.replaceAll("\\+", ""));
+            result.error("UNAVAILABLE", "No phone number on sim card", null);
+        } else result.success(mobileNumber.replaceAll("\\+", ""));
     }
 
     @Override
@@ -98,8 +100,7 @@ public class MobileNumberPlugin implements MethodCallHandler, RequestPermissions
                 return true;
             }
         }
-        result.success("");
-
+        result.error("PERMISSION", "onRequestPermissionsResult is not granted", null);
         return false;
     }
 }
