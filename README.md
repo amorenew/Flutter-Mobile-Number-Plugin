@@ -11,36 +11,24 @@ https://pub.dev/packages/mobile_number
 #### Add this to your package's pubspec.yaml file:
 ```
 dependencies:
-  mobile_number: ^0.0.4
+  mobile_number: ^0.0.5
 ```
 
 ## Usage
-#### Sample
+#### Get first sim card number
+
 ```
-Future<String> fillMobileNumber() async {
+Future<String> getMobileNumber() async {
     final String mobileNumber = await MobileNumber.mobileNumber;
     return mobileNumber;
   }
-  ```
-  
-### Or you could use it like this
+
+#### Get List of sim cards for dual sim cards
+
 ```
-  Future<void> initMobileNumberState() async {
-    String mobileNumber = '';
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      mobileNumber = await MobileNumber.mobileNumber;
-    } on PlatformException catch (e) {
-      debugPrint("Failed to get mobile number because of '${e.message}'");
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _mobileNumber = mobileNumber;
-    });
+Future<List<SimCard>> geSimCards() async {
+    final List<SimCard> simCards = await MobileNumber.getSimCards;
+    return simCards;
   }
   ```
+  

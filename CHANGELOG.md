@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Add support for dual sim card.
+
 ## 0.0.4
 
 * Print exception message on debugging console.
