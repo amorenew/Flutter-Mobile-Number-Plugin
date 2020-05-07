@@ -29,7 +29,7 @@ Future<String> getMobileNumber() async {
 Future<List<SimCard>> geSimCards() async {
     final List<SimCard> simCards = await MobileNumber.getSimCards;
     return simCards;
-  }
-  ```
+  }  ```
   
-![alt text](https://github.com/amorenew/Flutter-Mobile-Number-Plugin/blob/master/sample1.png)
+
+![alt text](https://raw.githubusercontent.com/amorenew/Flutter-Mobile-Number-Plugin/master/sample1.png)
