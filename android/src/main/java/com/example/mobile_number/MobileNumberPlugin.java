@@ -4,11 +4,17 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import org.json.JSONArray;
+
+import java.util.List;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -62,7 +68,7 @@ public class MobileNumberPlugin implements MethodCallHandler, RequestPermissions
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(MobileNumberPlugin.registrar.activity(),
-                        new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                        new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
@@ -75,17 +81,29 @@ public class MobileNumberPlugin implements MethodCallHandler, RequestPermissions
         }
     }
 
+    @SuppressLint("HardwareIds")
     private void generateMobileNumber() {
         String countryIso = telephonyManager.getSimCountryIso();
         String countryPhoneCode = CountryToPhonePrefix.prefixFor(countryIso);
-        @SuppressLint("HardwareIds") String line1Number = telephonyManager.getLine1Number();
-        if (line1Number.startsWith("0"))
-            line1Number = line1Number.substring(1);
-        String mobileNumber = countryPhoneCode + line1Number;
-        if (line1Number.isEmpty()) {
-            mobileNumber = "";
+        JSONArray simJsonArray = new JSONArray();
+        final SubscriptionManager subscriptionManager;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+            subscriptionManager = SubscriptionManager.from(MobileNumberPlugin.registrar.activity());
+
+            final List<SubscriptionInfo> activeSubscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+            for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
+                SimCard simCard = new SimCard(subscriptionInfo);
+                simJsonArray.put(simCard.toJSON());
+            }
+        }
+
+//        String line1Number = telephonyManager.getLine1Number();
+//        if (line1Number.startsWith("0"))
+//            line1Number = line1Number.substring(1);
+//        String mobileNumber = countryPhoneCode + line1Number;
+        if (simJsonArray.toString().isEmpty()) {
             result.error("UNAVAILABLE", "No phone number on sim card", null);
-        } else result.success(mobileNumber.replaceAll("\\+", ""));
+        } else result.success(simJsonArray.toString());
     }
 
     @Override

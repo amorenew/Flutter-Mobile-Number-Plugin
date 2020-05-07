@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
+import 'package:mobile_number/sim_card.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,6 +14,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _mobileNumber = '';
+  List<SimCard> _simCard = <SimCard>[];
 
   @override
   void initState() {
@@ -26,6 +28,7 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       mobileNumber = await MobileNumber.mobileNumber;
+      _simCard = await MobileNumber.getSimCards;
     } on PlatformException catch (e) {
       debugPrint("Failed to get mobile number because of '${e.message}'");
     }
@@ -40,6 +43,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Widget fillCards() {
+    List<Widget> widgets = _simCard
+        .map((SimCard sim) => Text(
+            'Sim Card Number: (${sim.countryPhonePrefix}) - ${sim.number}\nCarrier Name: ${sim.carrierName}\nCountry Iso: ${sim.countryIso}\nDisplay Name: ${sim.displayName}\nSim Slot Index: ${sim.slotIndex}\n\n'))
+        .toList();
+    return Column(children: widgets);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,7 +59,12 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_mobileNumber\n'),
+          child: Column(
+            children: <Widget>[
+              Text('Running on: $_mobileNumber\n'),
+              fillCards()
+            ],
+          ),
         ),
       ),
     );
