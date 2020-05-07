@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Add sample image.
+
 ## 0.0.5
 
 * Add support for dual sim card.
