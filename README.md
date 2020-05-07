@@ -17,19 +17,19 @@ dependencies:
 ## Usage
 #### Get first sim card number
 
-```
-Future<String> getMobileNumber() async {
+```Future<String> getMobileNumber() async {
     final String mobileNumber = await MobileNumber.mobileNumber;
     return mobileNumber;
   }
+  ```
 
 #### Get List of sim cards for dual sim cards
 
-```
-Future<List<SimCard>> geSimCards() async {
+```Future<List<SimCard>> geSimCards() async {
     final List<SimCard> simCards = await MobileNumber.getSimCards;
     return simCards;
-  }  ```
+  }
+  ```
   
 
 ![alt text](https://raw.githubusercontent.com/amorenew/Flutter-Mobile-Number-Plugin/master/sample1.png)
