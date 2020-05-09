@@ -1,3 +1,10 @@
+## 1.0.0
+
+* Addded has phone permission
+* Added request phone permission
+* Added phone permission listener
+* Fix bugs
+
 ## 0.0.6
 
 * Add sample image.

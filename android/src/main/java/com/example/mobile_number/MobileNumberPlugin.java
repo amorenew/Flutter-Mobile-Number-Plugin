@@ -9,7 +9,6 @@ import android.os.Build;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -22,6 +21,8 @@ import java.util.List;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -34,27 +35,48 @@ import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener;
  */
 public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler, RequestPermissionsResultListener {
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
-    private static Registrar registrar;
-    private Activity activityV2;
-    private Context contextV2;
+    final String Event_phonePermissionResult = "requestPhonePermission=";
+    EventChannel.EventSink permissionEvent;
+    private Context applicationContext;
+    private Activity activity;
     private TelephonyManager telephonyManager;
     private Result result;
+    private MethodChannel methodChannel;
+    private EventChannel permissionEventChannel;
+
+    {
+
+    }
 
     /**
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "mobile_number");
-        channel.setMethodCallHandler(new MobileNumberPlugin());
-        MobileNumberPlugin.registrar = registrar;
+        final MobileNumberPlugin instance = new MobileNumberPlugin();
+        instance.onAttachedToEngine(registrar.context(), registrar.messenger(), registrar.activity());
     }
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "mobile_number");
-        channel.setMethodCallHandler(new MobileNumberPlugin());
-        contextV2 = flutterPluginBinding.getApplicationContext();
+        onAttachedToEngine(flutterPluginBinding.getApplicationContext(), flutterPluginBinding.getBinaryMessenger(), null);
+    }
 
+    private void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger, Activity activity) {
+        this.applicationContext = applicationContext;
+        methodChannel = new MethodChannel(messenger, "mobile_number");
+        methodChannel.setMethodCallHandler(this);
+        permissionEventChannel = new EventChannel(messenger, "phone_permission_event");
+        permissionEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object o, EventChannel.EventSink eventSink) {
+                permissionEvent = eventSink;
+            }
+
+            @Override
+            public void onCancel(Object o) {
+
+            }
+        });
     }
 
     @Override
@@ -65,7 +87,8 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
         //MobileNumberPlugin.activity = activityPluginBinding.getActivity();
-        activityV2 = activityPluginBinding.getActivity();
+        //activityV2 = activityPluginBinding.getActivity();
+        activity = activityPluginBinding.getActivity();
     }
 
     @Override
@@ -86,73 +109,61 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         this.result = result;
-
-        if (call.method.equals("getMobileNumber")) {
-            telephonyManager = (TelephonyManager) getContext("8")
-                    .getSystemService(Context.TELEPHONY_SERVICE);
-            getMobileNumber();
-        } else {
-            result.notImplemented();
+        final String method_GetMobileNumber = "getMobileNumber";
+        final String method_hasPhonePermission = "hasPhonePermission";
+        final String method_requestPhonePermission = "requestPhonePermission";
+        switch (call.method) {
+            case method_GetMobileNumber:
+                telephonyManager = (TelephonyManager) applicationContext
+                        .getSystemService(Context.TELEPHONY_SERVICE);
+                getMobileNumber();
+                break;
+            case method_hasPhonePermission:
+                result.success(hasPhonePermission());
+                break;
+            case method_requestPhonePermission:
+                requestPhonePermission();
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 
-    private Context getContext(String log) {
-        Log.d("Context", log);
-        if (contextV2 != null)
-            return contextV2;
-        return MobileNumberPlugin.registrar.context();
-    }
-    private Activity getActivity(String log) {
-        Log.d("Activity", log);
-        if (activityV2 != null)
-            return activityV2;
-        return MobileNumberPlugin.registrar.activity();
-    }
-
-    private void getMobileNumber() {
+    private boolean hasPhonePermission() {
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(getActivity("1"),
-                    Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity("2"),
-                        Manifest.permission.READ_PHONE_NUMBERS)) {
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
-                } else {
-                    // No explanation needed; request the permission
-                    ActivityCompat.requestPermissions(getActivity("3"),
-                            new String[]{Manifest.permission.READ_PHONE_NUMBERS}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+            return ContextCompat.checkSelfPermission(applicationContext,
+                    Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return ContextCompat.checkSelfPermission(applicationContext,
+                    Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+        }
+    }
 
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
-            } else {
-                // Permission has already been granted
-                generateMobileNumber();
-
-            }
-        } else if (ContextCompat.checkSelfPermission(getActivity("4"),
-                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity("5"),
-                    Manifest.permission.READ_PHONE_STATE)) {
+    private void requestPhonePermission() {
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.READ_PHONE_NUMBERS)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(getActivity("6"),
-                        new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.READ_PHONE_NUMBERS}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
             }
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.READ_PHONE_STATE)) {
+            } else {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.READ_PHONE_STATE}, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
+            }
+        }
+    }
+
+    private void getMobileNumber() {
+        if (!hasPhonePermission()) {
+            requestPhonePermission();
         } else {
             // Permission has already been granted
             generateMobileNumber();
@@ -167,7 +178,7 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
         JSONArray simJsonArray = new JSONArray();
         final SubscriptionManager subscriptionManager;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-            subscriptionManager = SubscriptionManager.from(getActivity("7"));
+            subscriptionManager = SubscriptionManager.from(activity);
 
             final List<SubscriptionInfo> activeSubscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
             for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
@@ -188,13 +199,16 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
     @Override
     public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                               @NonNull int[] grantResults) {
-        // MobileNumberPlugin.registrar.super.onRequestPermissionsResult(requestCode,
-        // permissions, grantResults);
         // If request is cancelled, the result arrays are empty.
         if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHONE_STATE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (permissionEvent != null)
+                    permissionEvent.success(true);
                 generateMobileNumber();
                 return true;
+            } else {
+                if (permissionEvent != null)
+                    permissionEvent.success(false);
             }
         }
         result.error("PERMISSION", "onRequestPermissionsResult is not granted", null);

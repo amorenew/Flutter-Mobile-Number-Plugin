@@ -8,13 +8,28 @@ This is a FLutter Plugin to get the device mobile number.
 #### Link on Flutter plugins
 https://pub.dev/packages/mobile_number
 
-#### Add this to your package's pubspec.yaml file:
-```
-dependencies:
-  mobile_number: ^0.0.5
-```
 
 ## Usage
+
+#### Check Phone Permission
+
+```await MobileNumber.hasPhonePermission```
+
+#### Request Phone Permission
+
+```await MobileNumber.requestPhonePermission```
+
+#### Listen to widget resume after Phone Permission request
+
+```MobileNumber.listenPhonePermission((isPermissionGranted) {
+      if (isPermissionGranted) {
+        //Get mobile number
+      } else {
+        //Request Phone Permission
+      }
+    });
+    ```
+
 #### Get first sim card number
 
 ```Future<String> getMobileNumber() async {
