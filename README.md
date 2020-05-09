@@ -28,7 +28,7 @@ https://pub.dev/packages/mobile_number
         //Request Phone Permission
       }
     });
-    ```
+  ```
 
 #### Get first sim card number
 
