@@ -5,6 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_number/sim_card.dart';
 import 'package:mobile_number/widget_lifecycle.dart';
 
+export 'package:mobile_number/sim_card.dart';
+export 'package:mobile_number/widget_lifecycle.dart';
+
 class MobileNumber {
   static const MethodChannel _channel = const MethodChannel('mobile_number');
   static const EventChannel _phonePermissionEvent =

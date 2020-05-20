@@ -1,6 +1,6 @@
 name: mobile_number
 description: A Flutter plugin for fetching the device's mobile number
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/amorenew/Flutter-Mobile-Number-Plugin
 
 environment:

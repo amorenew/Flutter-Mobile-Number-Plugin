@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Fix crash related to Android 10
+
 ## 1.0.0
 
 * Addded has phone permission

@@ -1,37 +1,57 @@
 package com.example.mobile_number;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.telephony.SubscriptionInfo;
+import android.telephony.TelephonyManager;
 
 import androidx.annotation.RequiresApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Map;
-
 public class SimCard {
 
-    private String carrierName;
-    private  String displayName;
-    private int slotIndex;
-    private String number;
-    private String countryIso;
-    private  String countryPhonePrefix;
+    private String carrierName = "";
+    private String displayName = "";
+    private int slotIndex = 0;
+    private String number = "";
+    private String countryIso = "";
+    private String countryPhonePrefix = "";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-    public SimCard(SubscriptionInfo subscriptionInfo) {
+    public SimCard(TelephonyManager telephonyManager, SubscriptionInfo subscriptionInfo) {
         this.carrierName = subscriptionInfo.getCarrierName().toString();
-        this.displayName =subscriptionInfo.getDisplayName().toString();
+        this.displayName = subscriptionInfo.getDisplayName().toString();
         this.slotIndex = subscriptionInfo.getSimSlotIndex();
         this.number = subscriptionInfo.getNumber();
-        this.countryIso = subscriptionInfo.getCountryIso();
-        this.countryPhonePrefix = CountryToPhonePrefix.prefixFor(subscriptionInfo.getCountryIso());
+        if (subscriptionInfo.getCountryIso() != null && !subscriptionInfo.getCountryIso().isEmpty())
+            this.countryIso = subscriptionInfo.getCountryIso();
+        else if (telephonyManager.getSimCountryIso() != null)
+            this.countryIso = telephonyManager.getSimCountryIso();
+        this.countryPhonePrefix = CountryToPhonePrefix.prefixFor(this.countryIso);
     }
 
-    // final JSONArray jsonArray = new JSONArray();
+    @SuppressLint({"MissingPermission", "HardwareIds"})
+    public SimCard(TelephonyManager telephonyManager) {
+        if (telephonyManager.getSimOperator() != null)
+            carrierName = telephonyManager.getSimOperatorName();
+        if (telephonyManager.getSimOperator() != null)
+            displayName = telephonyManager.getSimOperatorName();
+        if (telephonyManager.getSimCountryIso() != null) {
+            countryIso = telephonyManager.getSimCountryIso();
+            countryPhonePrefix = CountryToPhonePrefix.prefixFor(countryIso);
+        }
+        if (telephonyManager.getLine1Number() != null && !telephonyManager.getLine1Number().isEmpty()) {
+            if (telephonyManager.getLine1Number().startsWith("0"))
+                number = countryPhonePrefix + telephonyManager.getLine1Number().substring(1);
+            number = telephonyManager.getLine1Number();
+        }
+    }
 
-    JSONObject toJSON(){
+// final JSONArray jsonArray = new JSONArray();
+
+    JSONObject toJSON() {
         JSONObject json = new JSONObject();
         try {
             json.put("carrierName", carrierName);

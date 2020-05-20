@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
-import 'package:mobile_number/sim_card.dart';
-import 'package:mobile_number/widget_lifecycle.dart';
 
 void main() => runApp(MyApp());
 
@@ -82,5 +80,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  resumeCallback(void Function() param0) {}
 }

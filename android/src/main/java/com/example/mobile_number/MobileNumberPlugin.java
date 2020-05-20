@@ -9,13 +9,16 @@ import android.os.Build;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -44,9 +47,6 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
     private MethodChannel methodChannel;
     private EventChannel permissionEventChannel;
 
-    {
-
-    }
 
     /**
      * Plugin registration.
@@ -173,28 +173,55 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     @SuppressLint("HardwareIds")
     private void generateMobileNumber() {
-        String countryIso = telephonyManager.getSimCountryIso();
-        String countryPhoneCode = CountryToPhonePrefix.prefixFor(countryIso);
         JSONArray simJsonArray = new JSONArray();
-        final SubscriptionManager subscriptionManager;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-            subscriptionManager = SubscriptionManager.from(activity);
-
-            final List<SubscriptionInfo> activeSubscriptionInfoList = subscriptionManager.getActiveSubscriptionInfoList();
-            for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
-                SimCard simCard = new SimCard(subscriptionInfo);
+            for (SubscriptionInfo subscriptionInfo : getSubscriptions()) {
+                SimCard simCard = new SimCard(telephonyManager, subscriptionInfo);
+                simJsonArray.put(simCard.toJSON());
+            }
+        }
+        if (simJsonArray.length()==0) {
+            SimCard simCard = getSingleSimCard();
+            if (simCard != null) {
                 simJsonArray.put(simCard.toJSON());
             }
         }
 
-//        String line1Number = telephonyManager.getLine1Number();
-//        if (line1Number.startsWith("0"))
-//            line1Number = line1Number.substring(1);
-//        String mobileNumber = countryPhoneCode + line1Number;
         if (simJsonArray.toString().isEmpty()) {
+            Log.d("UNAVAILABLE", "No phone number on sim card#3");
             result.error("UNAVAILABLE", "No phone number on sim card", null);
         } else result.success(simJsonArray.toString());
     }
+
+
+    @SuppressLint("HardwareIds")
+    SimCard getSingleSimCard() {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_DENIED
+                && ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
+            Log.e("UNAVAILABLE", "No phone number on sim card Permission Denied#2", null);
+            return null;
+        } else if (telephonyManager.getLine1Number() == null || telephonyManager.getLine1Number().isEmpty()) {
+            Log.e("UNAVAILABLE", "No phone number on sim card#2", null);
+            return null;
+        }
+        return new SimCard(telephonyManager);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    List<SubscriptionInfo> getSubscriptions() {
+        final SubscriptionManager subscriptionManager = (SubscriptionManager) activity.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_DENIED
+                && ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
+            Log.e("UNAVAILABLE", "No phone number on sim card Permission Denied#1", null);
+            return new ArrayList<>();
+        } else if (subscriptionManager == null) {
+            Log.e("UNAVAILABLE", "No phone number on sim card#1", null);
+            return new ArrayList<>();
+        }
+        return subscriptionManager.getActiveSubscriptionInfoList();
+    }
+
 
     @Override
     public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
