@@ -10,8 +10,7 @@ export 'package:mobile_number/widget_lifecycle.dart';
 
 class MobileNumber {
   static const MethodChannel _channel = const MethodChannel('mobile_number');
-  static const EventChannel _phonePermissionEvent =
-      EventChannel('phone_permission_event');
+  // static const EventChannel _phonePermissionEvent =EventChannel('phone_permission_event');
 
 //phone_permission_event // //
 

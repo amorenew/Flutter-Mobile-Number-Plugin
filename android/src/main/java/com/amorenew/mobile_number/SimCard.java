@@ -1,4 +1,4 @@
-package com.example.mobile_number;
+package com.amorenew.mobile_number;
 
 import android.annotation.SuppressLint;
 import android.os.Build;

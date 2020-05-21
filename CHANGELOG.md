@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Suppot old Flutter plugin V1
+
 ## 1.0.1
 
 * Fix crash related to Android 10

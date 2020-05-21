@@ -1,4 +1,4 @@
-package com.example.mobile_number;
+package com.amorenew.mobile_number;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -39,7 +39,7 @@ import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener;
 public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler, RequestPermissionsResultListener {
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 0;
     final String Event_phonePermissionResult = "requestPhonePermission=";
-    EventChannel.EventSink permissionEvent;
+    private EventChannel.EventSink permissionEvent;
     private Context applicationContext;
     private Activity activity;
     private TelephonyManager telephonyManager;
@@ -61,8 +61,10 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
         onAttachedToEngine(flutterPluginBinding.getApplicationContext(), flutterPluginBinding.getBinaryMessenger(), null);
     }
 
-    private void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger, Activity activity) {
+    private void onAttachedToEngine(Context applicationContext, BinaryMessenger messenger, Activity _activity) {
         this.applicationContext = applicationContext;
+        if(_activity!=null)
+            this.activity=_activity;
         methodChannel = new MethodChannel(messenger, "mobile_number");
         methodChannel.setMethodCallHandler(this);
         permissionEventChannel = new EventChannel(messenger, "phone_permission_event");

@@ -8,6 +8,22 @@ This is a FLutter Plugin to get the device mobile number.
 #### Link on Flutter plugins
 https://pub.dev/packages/mobile_number
 
+#### Note: 
+if you still using depecated FlutterActivty on MainActivity.java
+which is import of 
+- `import io.flutter.app.FlutterActivity;`
+
+not 
+- `import io.flutter.embedding.android.FlutterActivity;`
+
+then you need to add the following to your MainActivity.java
+``` 
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        MobileNumberPlugin.registerWith(registrarFor("com.amorenew.mobile_number.MobileNumberPlugin()"));
+    }
+  ```
 
 ## Usage
 
