@@ -1,6 +1,10 @@
+## 1.0.3
+
+* Fix crash because of null value on empty number
+
 ## 1.0.2
 
-* Suppot old Flutter plugin V1
+* Support old Flutter plugin V1
 
 ## 1.0.1
 

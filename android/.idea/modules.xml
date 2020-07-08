@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.amorenew.mobile_number-mobile_number.iml" filepath="$PROJECT_DIR$/.idea/modules/com.amorenew.mobile_number-mobile_number.iml" group="mobile_number" />
       <module fileurl="file://$PROJECT_DIR$/mobile_number.iml" filepath="$PROJECT_DIR$/mobile_number.iml" group="mobile_number" />
     </modules>
   </component>
