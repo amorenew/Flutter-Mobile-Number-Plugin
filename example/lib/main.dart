@@ -37,8 +37,8 @@ class _MyAppState extends State<MyApp> {
     String mobileNumber = '';
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      mobileNumber = await MobileNumber.mobileNumber;
-      _simCard = await MobileNumber.getSimCards;
+      mobileNumber = (await MobileNumber.mobileNumber)!;
+      _simCard = (await MobileNumber.getSimCards)!;
     } on PlatformException catch (e) {
       debugPrint("Failed to get mobile number because of '${e.message}'");
     }

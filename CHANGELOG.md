@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Null safety support
+
 ## 1.0.3
 
 * Fix crash because of null value on empty number

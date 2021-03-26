@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 class SimCard {
-  final String carrierName;
-  final String displayName;
-  final int slotIndex;
-  final String number;
-  final String countryIso;
-  final String countryPhonePrefix;
+  final String? carrierName;
+  final String? displayName;
+  final int? slotIndex;
+  final String? number;
+  final String? countryIso;
+  final String? countryPhonePrefix;
 
   SimCard({
     this.carrierName,

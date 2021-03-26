@@ -10,13 +10,10 @@ export 'package:mobile_number/widget_lifecycle.dart';
 
 class MobileNumber {
   static const MethodChannel _channel = const MethodChannel('mobile_number');
-  // static const EventChannel _phonePermissionEvent =EventChannel('phone_permission_event');
-
-//phone_permission_event // //
 
   static void listenPhonePermission(
       Function(bool isPermissionGranted) subscription) {
-    WidgetsBinding.instance.addObserver(WidgetLifecycle(
+    WidgetsBinding.instance!.addObserver(WidgetLifecycle(
       resumeCallBack: (() async {
         if (await MobileNumber.hasPhonePermission) {
           subscription(true);
@@ -37,29 +34,26 @@ class MobileNumber {
     await _channel.invokeMethod('requestPhonePermission');
   }
 
-  static Future<String> get mobileNumber async {
+  static Future<String>? get mobileNumber async {
     final String simCardsJson = await _channel.invokeMethod('getMobileNumber');
     if (simCardsJson.isEmpty) {
       return '';
     }
     List<SimCard> simCards = SimCard.parseSimCards(simCardsJson);
-    if (simCards != null &&
-        simCards.isNotEmpty &&
-        simCards[0] != null &&
-        simCards[0].number != null) {
-      return simCards[0].countryPhonePrefix + simCards[0].number;
+    if (simCards.isNotEmpty && simCards[0].number != null) {
+      return simCards[0].countryPhonePrefix! + simCards[0].number!;
     } else {
       return '';
     }
   }
 
-  static Future<List<SimCard>> get getSimCards async {
+  static Future<List<SimCard>>? get getSimCards async {
     final String simCardsJson = await _channel.invokeMethod('getMobileNumber');
     if (simCardsJson.isEmpty) {
       return <SimCard>[];
     }
     List<SimCard> simCards = SimCard.parseSimCards(simCardsJson);
-    if (simCards != null && simCards.isNotEmpty) {
+    if (simCards.isNotEmpty) {
       return simCards;
     } else {
       return <SimCard>[];
