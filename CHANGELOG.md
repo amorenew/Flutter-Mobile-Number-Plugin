@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Remove null check operator from method ListenPhone 
+
 ## 1.0.4
 
 * Null safety support
