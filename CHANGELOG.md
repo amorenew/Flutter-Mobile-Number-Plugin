@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Make min sdk to Flutter 3.0.0 
+
 ## 2.0.0
 
 * Remove null check operator from method ListenPhone 

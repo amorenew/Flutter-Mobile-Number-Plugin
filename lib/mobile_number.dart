@@ -12,16 +12,19 @@ class MobileNumber {
   static const MethodChannel _channel = const MethodChannel('mobile_number');
 
   static void listenPhonePermission(
-      Function(bool isPermissionGranted) subscription) {
-    WidgetsBinding.instance.addObserver(WidgetLifecycle(
-      resumeCallBack: (() async {
-        if (await MobileNumber.hasPhonePermission) {
-          subscription(true);
-        } else {
-          subscription(false);
-        }
-      }),
-    ));
+    Function(bool isPermissionGranted) subscription,
+  ) {
+    WidgetsBinding.instance.addObserver(
+      WidgetLifecycle(
+        resumeCallBack: (() async {
+          if (await MobileNumber.hasPhonePermission) {
+            subscription(true);
+          } else {
+            subscription(false);
+          }
+        }),
+      ),
+    );
   }
 
   static Future<bool> get hasPhonePermission async {

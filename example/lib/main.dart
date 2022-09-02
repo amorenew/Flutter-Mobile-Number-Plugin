@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_number/mobile_number.dart';
@@ -34,10 +33,9 @@ class _MyAppState extends State<MyApp> {
       await MobileNumber.requestPhonePermission;
       return;
     }
-    String mobileNumber = '';
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      mobileNumber = (await MobileNumber.mobileNumber)!;
+      _mobileNumber = (await MobileNumber.mobileNumber)!;
       _simCard = (await MobileNumber.getSimCards)!;
     } on PlatformException catch (e) {
       debugPrint("Failed to get mobile number because of '${e.message}'");
@@ -48,9 +46,7 @@ class _MyAppState extends State<MyApp> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    setState(() {
-      _mobileNumber = mobileNumber;
-    });
+    setState(() {});
   }
 
   Widget fillCards() {
