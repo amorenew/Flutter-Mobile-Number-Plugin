@@ -1,4 +1,4 @@
-arguments=--init-script /var/folders/w_/9srlm9_527v1w649s9qrbw4c0000gn/T/init16733875426254310012.gradle --init-script /var/folders/w_/9srlm9_527v1w649s9qrbw4c0000gn/T/init9621577157365473795.gradle
+arguments=--init-script /var/folders/w_/9srlm9_527v1w649s9qrbw4c0000gn/T/init4114375711100533742.gradle --init-script /var/folders/w_/9srlm9_527v1w649s9qrbw4c0000gn/T/init13429619840258550363.gradle
 auto.sync=false
 build.scans.enabled=false
 connection.gradle.distribution=GRADLE_DISTRIBUTION(VERSION(7.4.2))
