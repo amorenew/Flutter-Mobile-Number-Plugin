@@ -4,29 +4,29 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:7.2.2'
     }
 }
 
 rootProject.allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
 
     defaultConfig {
-        targetSdkVersion 29
-        minSdkVersion 17
+        targetSdkVersion 33
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.8.0'
+    implementation 'androidx.core:core:1.9.0'
     //implementation 'com.google.android.gms:play-services-auth:18.0.0'
     //implementation files('D:/Programming/Android/Tools/Flutter_SDK/bin/cache/artifacts/engine/android-x64/flutter.jar')
 

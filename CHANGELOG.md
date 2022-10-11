@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Fix Android building
+
 ## 2.1.0
 
 * Make min sdk to Flutter 3.0.0 
