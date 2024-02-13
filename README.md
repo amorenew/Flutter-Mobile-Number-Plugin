@@ -45,6 +45,26 @@ then you need to add the following to your MainActivity.java
       }
     });
   ```
+#### Alternative Phone Permission
+
+[permission_handler](https://pub.dev/packages/permission_handler) has a better implementation of device general permissions.
+
+A simple example would be:
+
+```dart
+var status = await Permission.phone.status;
+if (!status.isGranted) {
+  status = await Permission.phone.request();
+}
+
+if (!status.isGranted) {
+  // return or throw some error
+}
+
+return await MobileNumber.mobileNumber;
+
+```
+
 
 #### Get first sim card number
 
