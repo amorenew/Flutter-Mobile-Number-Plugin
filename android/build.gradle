@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'com.amorenew.mobile_number'
+    namespace = 'com.amorenew.mobile_number'
     compileSdkVersion 33
 
     defaultConfig {
