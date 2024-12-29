@@ -13,6 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _mobileNumber = '';
+  bool _isPermissionGranted = false;
   List<SimCard> _simCard = <SimCard>[];
 
   @override
@@ -20,6 +21,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     MobileNumber.listenPhonePermission((isPermissionGranted) {
       if (isPermissionGranted) {
+        _isPermissionGranted = isPermissionGranted;
         initMobileNumberState();
       } else {}
     });
@@ -32,6 +34,8 @@ class _MyAppState extends State<MyApp> {
     if (!await MobileNumber.hasPhonePermission) {
       await MobileNumber.requestPhonePermission;
       return;
+    }else{
+      _isPermissionGranted = true;
     }
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -62,12 +66,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Mobile Number example app'),
         ),
         body: Center(
           child: Column(
             children: <Widget>[
               Text('Running on: $_mobileNumber\n'),
+              Text('Permission for access sim card: $_isPermissionGranted\n'),
               fillCards()
             ],
           ),

@@ -1,3 +1,7 @@
+## 3.0.0
+
+* Upgrade gradle and the flutter support to 3+
+
 ## 2.1.1
 
 * Fix Android building
