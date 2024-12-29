@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:8.7.3'
     }
 }
 
@@ -23,10 +23,10 @@ apply plugin: 'com.android.library'
 
 android {
     namespace = 'com.amorenew.mobile_number'
-    compileSdkVersion 33
+    compileSdk 35
 
     defaultConfig {
-        targetSdkVersion 33
+        targetSdkVersion 35
         minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.9.0'
+    implementation 'androidx.core:core:1.15.0'
     //implementation 'com.google.android.gms:play-services-auth:18.0.0'
     //implementation files('D:/Programming/Android/Tools/Flutter_SDK/bin/cache/artifacts/engine/android-x64/flutter.jar')
 
