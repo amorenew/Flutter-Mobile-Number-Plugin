@@ -169,19 +169,23 @@ public class MobileNumberPlugin implements FlutterPlugin, ActivityAware, MethodC
                 if (subscriptionManager != null) {
                     List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
                     if (subscriptionInfos != null && !subscriptionInfos.isEmpty()) {
-                        // Get the first active subscription
-                        SubscriptionInfo subscriptionInfo = subscriptionInfos.get(0);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            // For Android N (7.0) and above
-                            TelephonyManager subscriptionTelephonyManager =
-                                    telephonyManager.createForSubscriptionId(subscriptionInfo.getSubscriptionId());
-                            String subscriptionPhoneNumber = subscriptionTelephonyManager.getLine1Number();
-                            if (subscriptionPhoneNumber != null && !subscriptionPhoneNumber.isEmpty() && !subscriptionPhoneNumber.equals(phoneNumber)) {
-                                simCards.add(new SimCard(subscriptionTelephonyManager));
+                        for (int i = 0; i < subscriptionInfos.size(); i++) {
+                            // Get the first active subscription
+                            SubscriptionInfo subscriptionInfo = subscriptionInfos.get(i);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                // For Android N (7.0) and above
+                                TelephonyManager subscriptionTelephonyManager =
+                                        telephonyManager.createForSubscriptionId(subscriptionInfo.getSubscriptionId());
+                                String subscriptionPhoneNumber = subscriptionTelephonyManager.getLine1Number();
+                                if (subscriptionPhoneNumber != null && !subscriptionPhoneNumber.isEmpty() && !subscriptionPhoneNumber.equals(phoneNumber)) {
+                                    simCards.add(new SimCard(subscriptionTelephonyManager));
+                                }
+
                             }
-
                         }
+
                     }
                 }
             }
